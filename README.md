@@ -29,7 +29,7 @@ async with p.Server(configure_container=ActiveFence().configure_container) as se
 
 ```
 
-At a minimum, an API key must be configured. This and more can be supplied using environment variables.
+For the ActiveFence integration to work, an API key must be configured. This and more can be supplied using environment variables.
 The following environment variables can be used to configure ActiveFence integration:
 
 | Variable | Description | Default |
@@ -49,8 +49,8 @@ async with p.Server(configure_container=moderation.configure_container) as serve
 
 ### Impact
 
-Using ActiveFence's moderation as shown will Analyze messages sent by the user to the AI agent, and the response by the AI agent to the user.
-This way, you can handle abusive messages from users and shield the application from malicious prompts, as well as make sure the agent responses align to your policies.
+Using ActiveFence's moderation as shown will analyze messages sent by users to the AI agent, and the agent's response to them.
+This helps manage abusive messages, protect the application from malicious prompts and ensure the agent responses align to your policies.
 
 User messages blocked by ActiveFence will not reach the agent, but it will get a flagged message indication a censored user request. You can guide the agent to respond to such messages using the Parlant guidelines, like so:
 ```python
@@ -60,11 +60,9 @@ await agent.create_guideline(
     )
 ```
 
-Analysis of the agent responses works a bit different. When a policy violation is detected, a warning is logged using Parlant's internal logger. This warning message will look like this:
+Analysis of the agent responses works a bit different. If the ActiveFence analysis marks the response as BLOCKED, the message itself will not be returned to the user, and instead a preconfigured block message will be returned. This message can be configured as described above.
+If a policy violation is detected but not flagged to be blocked, a warning is logged using Parlant's internal logger. This warning message will look like this:
 [warning  ] [ReuwnpD7Gzn::process][MessageEventComposer][CannedResponseGenerator] Prevented sending a non-compliant message: 'However, I can't respond to your previous message because it was censored based on our guardrails analysis. If you have another question or need assistance, feel free to ask.'.
-
-If the ActiveFence analysis marks the response as BLOCKED, the message itself will not be returned to the user, and instead a preconfigured block message will be returned.
-This message can be configured as described above.
 
 ### Example
 
